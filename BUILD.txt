@@ -1,0 +1,23 @@
+BUILDING & PACKAGING cache_config
+
+The current build and package process is script-driven, slightly fragile and not at
+all what should be kept long term for the project. Bearing that in mind: these
+instructions are subject to change at any time.
+
+The build is driven by the build.sh script. At the time of writing, it has only ever
+been tested on OS X and Linux. It may work in a Cygwin bash shell. It takes care of
+moving around the code, checking timestamps, and creating the tarballs.
+
+It pauses mid-way through the process if the compile version (cache_config.exe) of the
+utility is missing or out of date when compared to its dependencies.
+
+The pause exists to give the user a chance to move to a Windows OS to compile the 
+wrapped, py2exe version of the utility using the build.bat script.
+
+Once the compiled version is up to date, re-running build.sh picks the build process
+back up and completes the packaging step.
+
+I welcome any and all contributions that make this process better, driven by proper
+build-and-test tools that handle multiple OS targets better.
+
+- Ian Chesal <ichesal@cyclecomputing.com>
