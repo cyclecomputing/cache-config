@@ -57,7 +57,7 @@ import socket
 # GLOBALS
 ################################################################################
 
-__version__ = '1.0'
+__version__ = "1.1"
 
 # SOCKET CONFIGURATION
 __timeout__ = 2 # seconds

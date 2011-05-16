@@ -22,7 +22,7 @@ REM ############################################################################
 REM This creates the EXE, which must be done on Windows, so it is checked in.
 REM Run build.sh on Unix after running this on Windows to create the packages.
 
-del dist\cache_config.exe
+del /q /f dist\cache_config.exe
 python setup.py py2exe
 
 echo.

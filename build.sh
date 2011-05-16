@@ -51,7 +51,7 @@ fi
 prep_build() {
     rm -rf build
     mkdir -p  $BUILD_DIR
-    cp ../*.pdf $BUILD_DIR
+    cp README.txt $BUILD_DIR
 }
 
 ## Native python build
@@ -59,7 +59,7 @@ prep_build
 
 cp cache_config.py $BUILD_DIR
 
-FILE=cache_config_$VERSION.python.tar.gz
+FILE=cache_config-$VERSION-python.tar.gz
 
 cd build
 tar czf $FILE cache_config
@@ -67,38 +67,55 @@ cd ..
 
 mv build/$FILE $DIST_DIR
 
+echo "Success: Built $FILE package"
+
 #### Windows
+
+BUILD_WINDOWS=1
 
 prep_build
 
-
-# get the latest modification time for any py file
-LAST_MOD=`find . -name '*.py' -exec $STAT {} \; | sort -n -r | head -1`
-# get the modification time for the EXE
-EXE_MOD=`$STAT dist/cache_config.exe`
-
-if [ "$EXE_MOD" -lt "$LAST_MOD" ] ; then
-    echo "ERROR: cache_config.exe appears to be out of date. Please run build.bat on Windows to create a new EXE."
-    exit 1
+if [ ! -f dist/cache_config.exe ];
+then
+    echo "Warning: Missing dist/cache_config.exe -- skipping Windows package build"
+    echo "         Run build.bat on a Windows machine if you want to build the Windows package"
+    BUILD_WINDOWS=0
 fi
 
-cp dist/*.exe $BUILD_DIR
+if [ $BUILD_WINDOWS -eq 1 ];
+then
 
-FILE=cycle_cache_config_$VERSION.win32.zip
+    # get the latest modification time for any py file
+    LAST_MOD=`find . -name '*.py' -exec $STAT {} \; | sort -n -r | head -1`
+    # get the modification time for the EXE
+    EXE_MOD=`$STAT dist/cache_config.exe`
 
 
-# Verify that we have the 7zip tool
-export ZIP=`which 7za`
-if [ -z "$ZIP" ]; then
-    echo "ERROR: Unable to find the 7zip compression tool." >&2
-    echo "Try \"port install p7zip\" or \"yum install p7zip\" depending on your OS." >&2
-    exit 1
+    if [ "$EXE_MOD" -lt "$LAST_MOD" ] ; then
+        echo "ERROR: cache_config.exe appears to be out of date. Please run build.bat on Windows to create a new EXE."
+        exit 1
+    fi
+
+    cp dist/*.exe $BUILD_DIR
+
+    FILE=cache_config-$VERSION-win32.zip
+
+
+    # Verify that we have the 7zip tool
+    export ZIP=`which 7za`
+    if [ -z "$ZIP" ]; then
+        echo "ERROR: Unable to find the 7zip compression tool." >&2
+        echo "Try \"port install p7zip\" or \"yum install p7zip\" depending on your OS." >&2
+        exit 1
+    fi
+
+    cd build
+    $ZIP a -bd -tzip $FILE cache_config
+    cd ..
+
+    mv build/$FILE $DIST_DIR
 fi
-
-cd build
-$ZIP a -bd -tzip $FILE cache_config
-cd ..
-
-mv build/$FILE $DIST_DIR
 
 rm -rf build
+
+echo "Build complete"
