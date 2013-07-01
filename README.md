@@ -45,7 +45,7 @@ To fetch your configuration from a CycleServer instance, make your configuration
 
 ## See Also
 
-* [HTCondor][condor] - high throughput computing from the University of Wisconsin
+* [HTCondor][htcondor] - high throughput computing from the University of Wisconsin
 * For more information on "Configuration with Pipes" in HTCondor, please see the HTCondor manual. In the 7.6 manual the appropriate section is [3.3.1.4][configwithpipes]
 
 ## Copyright
@@ -61,6 +61,6 @@ Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 
 [cycleserver]:http://www.cyclecomputing.com/cycleserver/overview
-[condor]:http://www.uwisc.cs.edu/condor
+[htcondor]:http://research.cs.wisc.edu/htcondor
 [curl]:http://curl.haxx.se/
-[configwithpipes]:http://www.cs.wisc.edu/condor/manual/v7.6/3_3Configuration.html#15120
+[configwithpipes]:http://research.cs.wisc.edu/htcondor/manual/v7.8/3_3Configuration.html#SECTION00431400000000000000
