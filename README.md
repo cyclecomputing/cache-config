@@ -1,8 +1,8 @@
 # CacheConfig
 
-The cache_config tool is designed to work with Condor’s "Configuration with Pipes" feature, enabling users to fetch Condor configuration files from web servers, web applications or anything that can be represented using a URL.
+The cache_config tool is designed to work with HTCondor’s "Configuration with Pipes" feature, enabling users to fetch HTCondor configuration files from web servers, web applications or anything that can be represented using a URL.
 
-It supports expiring, local file caching to reduce the number of calls triggered against a web service by a busy Condor system. This cache approach also decreases the latency for condor_* command line calls and ensures a Condor pool can survive an outage of all of the configuration-publishing resources.
+It supports expiring, local file caching to reduce the number of calls triggered against a web service by a busy HTCondor system. This cache approach also decreases the latency for condor_* command line calls and ensures a HTCondor pool can survive an outage of all of the configuration-publishing resources.
 
 Support for multiple URLs provides a simple mechanism to ensure high-availability for configuration information. The cache_config tool will attempt to pull configuration from each URL, stopping after the first successful pull happens.
 
@@ -22,13 +22,14 @@ Support for multiple URLs provides a simple mechanism to ensure high-availabilit
 cache_config checks for an existing, local, cache file to determine whether the time-to-live (TTL) has expired. If the cache file's time to live has not expires, cache_config simply outputs the local, cache file contents. If the time to live for the cached file has expired, a cross-platform compatible lock is
 acquired, with its own TTL to avoid deadlock cases. cache_config then gets the configuration file by attempting to read from the list of URLs for the configuration data. If any error occurs in reading from the first URL, the second is attempted, then the third, and so on, until configuration is successfully fetched and cached. Should all URLs fail, cache_config returns the existing, stale, configuration with additional configuration settings embedded in the output that publish the details of the failures.
 
-## Condor Configuration
 
-In using cache_config with Condor it is recommended you copy it to your condor\bin directory (the BIN directory in your current Condor configuration). When configuring Condor, it is recommended you have a local configuration file that will get Condor up and running, then use the following line within that file to fetch the detailed configuration for the machine:
+## HTCondor Configuration
+
+In using cache_config with HTCondor it is recommended you copy it to your condor\bin directory (the BIN directory in your current HTCondor configuration). When configuring HTCondor, it is recommended you have a local configuration file that will get HTCondor up and running, then use the following line within that file to fetch the detailed configuration for the machine:
 
 	LOCAL_CONFIG_FILE = "$(BIN)\cache_config.py $(LOCAL)\cached_config 30 30 http://webserver_url" |
 
-The above line should appear last in your local configuration file to ensure that any configuration sent to Condor via the fetch URL overrides any of the local bootstrap configuration.
+The above line should appear last in your local configuration file to ensure that any configuration sent to HTCondor via the fetch URL overrides any of the local bootstrap configuration.
 
 Note: If using CacheConfig for Windows replace `$(BIN)\cache_config.py` with `$(BIN)\cache_config.exe` in the configuration line above.
 
@@ -44,8 +45,8 @@ To fetch your configuration from a CycleServer instance, make your configuration
 
 ## See Also
 
-* [Condor][condor] - high throughput computing from the University of Wisconsin
-* For more information on "Configuration with Pipes" in Condor, please see the Condor manual. In the 7.6 manual the appropriate section is [3.3.1.4][configwithpipes]
+* [HTCondor][condor] - high throughput computing from the University of Wisconsin
+* For more information on "Configuration with Pipes" in HTCondor, please see the HTCondor manual. In the 7.6 manual the appropriate section is [3.3.1.4][configwithpipes]
 
 ## Copyright
 
