@@ -88,8 +88,10 @@ logging.basicConfig(level=logLevel,
 # PROXY CONFIGURATION
 # Python http_proxy incompatibility for http_proxy:
 #   handle the case where it does not start with http://
-if os.environ.has_key("http_proxy") and os.environ["http_proxy"][:7] !="http://":
-    os.environ["http_proxy"]="http://"+os.environ["http_proxy"]
+for http_proxy in ['http_proxy', 'HTTP_PROXY']:
+    if os.environ.has_key(http_proxy) and os.environ[http_proxy][:7] !="http://":
+        os.environ[http_proxy]="http://"+os.environ[http_proxy]
+        break
 
 # SEED CONFIGURATION
 random.seed()
