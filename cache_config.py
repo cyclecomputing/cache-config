@@ -57,7 +57,7 @@ import socket
 # GLOBALS
 ################################################################################
 
-__version__ = "1.1"
+__version__ = "1.2"
 
 # SOCKET CONFIGURATION
 __timeout__ = 2 # seconds
@@ -295,7 +295,7 @@ def downloadConfig(url, cache_file, temp_cache_file_fp, lastAttempt):
             modified = time.gmtime(os.path.getmtime(cache_file))
             RFC_1123_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
             req.add_header("If-Modified-Since", time.strftime(RFC_1123_FORMAT, modified))
-        url_fp = urllib2.urlopen(req)
+        url_fp = urllib2.urlopen(req, timeout=15)
         config = writeToFile(url_fp, temp_cache_file_fp, False)
     except Exception, e:
         if not lastAttempt:
