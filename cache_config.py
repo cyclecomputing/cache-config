@@ -3,13 +3,13 @@
 ###### COPYRIGHT NOTICE ########################################################
 #
 # Copyright (C) 2007-2011, Cycle Computing, LLC.
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License"); you
 # may not use this file except in compliance with the License.  You may
 # obtain a copy of the License at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0.txt
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,7 +34,7 @@
 #
 # The cache_config script will attempt to pull an updated configuration for a machine
 # from the URL list, stopping when it successfully pulls config from a URL. It will
-# store the config on disk, with a time-to-live, and use the cached copy of the 
+# store the config on disk, with a time-to-live, and use the cached copy of the
 # config if the time-to-live has not expired. It will keep using the cached copy if
 # no new copy can be successfully fetched from any source on the URL list.
 
@@ -65,21 +65,21 @@ socket.setdefaulttimeout(__timeout__)
 
 
 # LOGGING CONFIGURATION
-log_level_map       = dict()
-log_level_map['1']  = logging.DEBUG
-log_level_map['2']  = logging.INFO
-log_level_map['3']  = logging.WARNING
-log_level_map['4']  = logging.ERROR
-log_level_map['5']  = logging.CRITICAL
+log_level_map      = dict()
+log_level_map['1'] = logging.DEBUG
+log_level_map['2'] = logging.INFO
+log_level_map['3'] = logging.WARNING
+log_level_map['4'] = logging.ERROR
+log_level_map['5'] = logging.CRITICAL
 
-env_var     = '_CACHE_TOOL_DEBUG'
-should_log  = os.environ.has_key(env_var) and log_level_map.has_key(os.environ[env_var])
+env_var    = '_CACHE_TOOL_DEBUG'
+should_log = os.environ.has_key(env_var) and log_level_map.has_key(os.environ[env_var])
 
 if should_log:
-    logLevel=log_level_map[os.environ[env_var]]
+    logLevel = log_level_map[os.environ[env_var]]
 else:
-    logLevel=logging.CRITICAL
-    
+    logLevel = logging.CRITICAL
+
 logging.basicConfig(level=logLevel,
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     datefmt='%a, %d %b %Y %H:%M:%S',
@@ -89,8 +89,8 @@ logging.basicConfig(level=logLevel,
 # Python http_proxy incompatibility for http_proxy:
 #   handle the case where it does not start with http://
 for http_proxy in ['http_proxy', 'HTTP_PROXY']:
-    if os.environ.has_key(http_proxy) and os.environ[http_proxy][:7] !="http://":
-        os.environ[http_proxy]="http://"+os.environ[http_proxy]
+    if os.environ.has_key(http_proxy) and os.environ[http_proxy][:7] != "http://":
+        os.environ[http_proxy] = "http://"+os.environ[http_proxy]
         break
 
 # SEED CONFIGURATION
@@ -118,25 +118,26 @@ class DirectoryLock:
         self.isStepRandom   = step_random_coeff == 0.0
         self.timeStep       = step_base*(1+(step_random_coeff*(1.0-2*random.random())))
         logging.info('Created a directory lock with timeStep %s seconds.' % str(self.timeStep))
-    
-    
+
+
     def acquire(self, acquire_by_force=True, lock_timeout=30):
         '''Attempt to acquire the lock, with a configuration timeout value. Return True if
         acquired. False if acquie was forced. Raises DirectoryLockError if directory is
         already locked.'''
         if lock_timeout <= 0:
-            logmsg = "Error Acquiring DirectoryLock: '%s' with invalid timeout of '%d' seconds" % (self.dirName, lock_timeout)
+            logmsg = "Error Acquiring DirectoryLock: '%s' with invalid timeout of '%d' seconds" % \
+                    (self.dirName, lock_timeout)
             logging.error(logmsg)
             raise DirectoryLockError(logmsg)
-            
+
         if self.isLocked == True:
-            logmsg="Error Acquiring DirectoryLock: '%s' is already locked!" % self.dirName
+            logmsg = "Error Acquiring DirectoryLock: '%s' is already locked!" % self.dirName
             logging.error(logmsg)
             raise DirectoryLockError(logmsg)
-            
-        wait_duration=0
+
+        wait_duration = 0
         logging.info("Acquiring lock")
-        
+
         while wait_duration < lock_timeout:
             wait_duration += self.timeStep
             try:
@@ -162,14 +163,14 @@ class DirectoryLock:
             logmsg = "Error acquiring DirectoryLock on '%s'" % self.dirName
             logging.error(logmsg)
             raise DirectoryLockError(logmsg)
-    
-    
+
+
     def __del__(self):
         '''Automatically destroy the lock when the object is deleted.'''
         if self.isLocked:
             self.release(True)
-    
-                
+
+         
     def release(self, raise_remove_error=False):
         '''Release the lock. Raises DirectoryLockError if lock cannot be removed
         or does not exist.'''
@@ -177,15 +178,15 @@ class DirectoryLock:
             logmsg = "Error releasing DirectoryLock: '%s' is not locked yet!" % self.dirName
             logging.error(logmsg)
             raise DirectoryLockError(logmsg)
-        self.isLocked=False
+        self.isLocked = False
         try:
             os.rmdir(self.dirName)
         except os.error, err:
             if raise_remove_error:
-                logmsg="Error releasing DirectoryLock: '%s' remove appeared to fail!" % self.dirName
+                logmsg = "Error releasing DirectoryLock: '%s' remove appeared to fail!" % self.dirName
                 logging.error(logmsg)
                 raise DirectoryLockError(logmsg)
-    
+
 
 class CacheConfigFile:
     '''An object representation of a config cache file. Provides some utility
@@ -197,45 +198,44 @@ class CacheConfigFile:
         randStr           = '.'+hex(int(random.random()*256*256*256*256))[2:10]
         self.tempFileName = filename+randStr
         logging.info("CacheConfigFile created with tempFileName: %s"%self.tempFileName)
-    
+
     def __del__(self):
         '''Clean up any temporary files that were created.'''
         if os.path.isfile(self.tempFileName):
             os.remove(self.tempFileName)
-    
+
     def temporaryFileName(self):
         '''Return the name of a unique, temporary file we can use.'''
         return self.tempFileName
-    
+
     def exists(self):
         '''Returns True if the cache file exists on disk, otherwise False.'''
         return os.path.exists(self.fileName)
-    
-    
+
     def shouldUpdate(self):
         '''Check the cache file\'s timestamp against the TTL value for this file
         set when the object was created. Return True if the TTL has expired.
         Otherwise False.'''
-        currentTime=time.time()
+        currentTime = time.time()
         if self.exists():
-            lastModified=os.path.getmtime(self.fileName)
+            lastModified = os.path.getmtime(self.fileName)
 
             logging.info("CacheConfigFile last modified: %s" % lastModified)
-            cacheAge=currentTime-lastModified
+            cacheAge = currentTime-lastModified
             logging.info("CacheConfigFile age: %s" % cacheAge)
             if cacheAge < float(self.fileTTL):
                 logging.info("CacheConfigFile can be reused!")
                 return False
         logging.info("CacheConfigFile should be updated!")
         return True
-    
+
 
 class CustomHttpHandler(urllib2.HTTPHandler):
     '''Handler helper class for dealing with URL requests.'''
 
     def http_error_304(self, req, fp, code, msg, hdrs):
         return open(self.cache_file)
-    
+
 
 
 ################################################################################
@@ -250,7 +250,7 @@ def writeToFile(in_fp, out_fp, error):
     stream named CONFIG_FILE_ERROR.'''
     # Track errors encountered
     config_lines = []
-    
+
     try:
         if error:
             config_lines.append(error)
@@ -265,14 +265,14 @@ def writeToFile(in_fp, out_fp, error):
                 skip_next = True
             else:
                 config_lines.append(current_line)
-            current_line=in_fp.readline()
-            
+            current_line = in_fp.readline()
+
         config = ''.join(config_lines)
         out_fp.write(config)
         return config
     finally:
         in_fp.close()
-    
+
 
 
 def downloadConfig(url, cache_file, temp_cache_file_fp, lastAttempt):
@@ -285,7 +285,7 @@ def downloadConfig(url, cache_file, temp_cache_file_fp, lastAttempt):
     opener             = urllib2.build_opener(handler)
     opener.addheaders = [('User-agent', 'CacheConfig/%s' % __version__)]
     urllib2.install_opener(opener)
-    
+
     try:
         req = urllib2.Request(url=url)
         if os.path.exists(cache_file):
@@ -322,13 +322,14 @@ def main():
             cache_lock_timeout = int(sys.argv[3])
             cache_config_file  = CacheConfigFile(cache_file_name, cache_file_timeout)
             config_urls        = sys.argv[4:]
-            logging.debug("CacheFile Name: %s\nCacheFile TTL: %d\nLock TTL: %d\n" % (cache_file_name, cache_file_timeout, cache_lock_timeout))
+            logging.debug("CacheFile Name: %s\nCacheFile TTL: %d\nLock TTL: %d\n" % \
+                    (cache_file_name, cache_file_timeout, cache_lock_timeout))
             for u in config_urls:
                 logging.debug("Config URL: %s" %u)
         except:
             logging.error("Error parsing arguments...")
             return 1
-    
+
         try:
             # Generate an app-specific directory name for our lock and then
             # attempt to get a lock on it.
@@ -336,14 +337,14 @@ def main():
             dlock         = DirectoryLock(directoryName)
             dlock.acquire(True, cache_lock_timeout)
         except DirectoryLockError, error:
-            logging.error("Error acquiring directory lock!")
+            logging.error("Error acquiring directory lock: %s" % error)
             pass
-        
+
         config         = None
         should_print   = False
         error_occurred = False
         error_messages = []
-        
+
         # Once acquired, if cachefile doesn't exist or it is beyond its time to live (TTL),
         # request the configuration file from the URL given. One the configuration has been
         # fetched withou error, write it to temporary file and then move it in to place .
@@ -351,15 +352,18 @@ def main():
         if should_update:
             url_counter = 0
             # Keep moving through the URLs in the list until we can pull a configuration
-            while should_print == False and url_counter < len(config_urls):            
+            while should_print == False and url_counter < len(config_urls):       
                 try:
                     error_occurred = False
-                    logging.info("Opening temp cache file: %s" % cache_config_file.temporaryFileName())
+                    logging.info("Opening temp cache file: %s" % \
+                            cache_config_file.temporaryFileName())
                     temp_cache_file_fp = open(cache_config_file.temporaryFileName(), 'w')
                     try:
-                        logging.info("Opening URL #%d: %s" % (url_counter+1, config_urls[url_counter]))
+                        logging.info("Opening URL #%d: %s" % \
+                                (url_counter+1, config_urls[url_counter]))
                         lastAttempt = url_counter == len(config_urls) - 1
-                        config = downloadConfig(config_urls[url_counter], cache_config_file.fileName, temp_cache_file_fp, lastAttempt)
+                        config = downloadConfig(config_urls[url_counter], \
+                                cache_config_file.fileName, temp_cache_file_fp, lastAttempt)
                     finally:
                         temp_cache_file_fp.close()
                     logging.info("Copying tempCacheConfig file to cacheFile")
@@ -395,11 +399,11 @@ def main():
                 should_print   = True
             except:
                 error_occurred = True
-            
+
         if should_log:
             # If we are logging, give the user a chance to read the output.
             time.sleep(5)
-        
+
         if should_print and not error_occurred:
             print config
     else:
