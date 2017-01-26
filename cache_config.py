@@ -22,7 +22,7 @@
 # USAGE
 ################################################################################
 
-# For detailed usage information please see README.txt
+# For detailed usage information please see README.md
 #
 #   cache_config cacheFileName cacheFileTimeout lockTimeout URL1 [OptionalURL2 ...]
 #
