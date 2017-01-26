@@ -8,6 +8,10 @@ Support for multiple URLs provides a simple mechanism to ensure high-availabilit
 
 ## Installation
 
+Download locations: 
+    https://s3.amazonaws.com/download.cyclecomputing.com/cache-config/cache_config-1.2-win32.zip
+    https://github.com/cyclecomputing/cache-config/releases/download/cache-config-1.2/cache_config-1.2-win32.zip
+
 On Windows, put the cache_config.exe file in the HTCondor bin directory.
 
 On other OSes, put the cache_config.py file in the HTCondor bin directory.
